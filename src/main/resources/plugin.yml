@@ -1,0 +1,6 @@
+name: Syncity
+version: '${project.version}'
+main: me.drwoops.syncity.Syncity
+api-version: 1.17
+authors: [ drwoops ]
+description: sync all the things when players move between servers
