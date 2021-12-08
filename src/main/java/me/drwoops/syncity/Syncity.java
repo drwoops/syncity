@@ -1,9 +1,6 @@
 package me.drwoops.syncity;
 
-import me.drwoops.syncity.plugins.AdvancementsPlugin;
-import me.drwoops.syncity.plugins.DamagePlugin;
-import me.drwoops.syncity.plugins.ExperiencePlugin;
-import me.drwoops.syncity.plugins.HungerPlugin;
+import me.drwoops.syncity.plugins.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,6 +31,7 @@ public final class Syncity extends JavaPlugin implements Listener {
         plugins.put("experience", new ExperiencePlugin(this));
         plugins.put("damage", new DamagePlugin(this));
         plugins.put("hunger", new HungerPlugin(this));
+        plugins.put("inventory", new InventoryPlugin(this));
         // register event handlers
         getServer().getPluginManager().registerEvents(this, this);
     }
