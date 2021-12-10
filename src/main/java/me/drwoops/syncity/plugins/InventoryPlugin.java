@@ -8,7 +8,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.Base64;
 
 public class InventoryPlugin implements SyncityPlugin {
@@ -36,6 +35,7 @@ public class InventoryPlugin implements SyncityPlugin {
         data.put("contents", serialize_itemstack(inv.getStorageContents()));
         data.put("armor", serialize_itemstack(inv.getArmorContents()));
         data.put("extra", serialize_itemstack(inv.getExtraContents()));
+        data.put("enderchest", serialize_itemstack(player.getEnderChest().getContents()));
         return data;
     }
 
@@ -66,6 +66,10 @@ public class InventoryPlugin implements SyncityPlugin {
         if (data.has("extra")) {
             JSONArray extra_json = data.getJSONArray("extra");
             inv.setExtraContents(deserialize_itemstack(extra_json));
+        }
+        if (data.has("enderchest")) {
+            JSONArray enderchest_json = data.getJSONArray("enderchest");
+            player.getEnderChest().setContents(deserialize_itemstack(enderchest_json));
         }
     }
 }
