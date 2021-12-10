@@ -17,12 +17,12 @@ import java.util.List;
 import static org.bukkit.Bukkit.advancementIterator;
 import static org.bukkit.Bukkit.getAdvancement;
 
-public class AdvancementsPlugin implements SyncityPlugin {
-    Syncity plugin;
+public class AdvancementsPlugin extends SyncityPlugin {
+
     List<String> exclude;
 
     public AdvancementsPlugin(Syncity plugin) {
-        this.plugin = plugin;
+        super(plugin);
         this.exclude = plugin.getConfig().getStringList("advancements.exclude");
     }
 

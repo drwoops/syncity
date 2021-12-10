@@ -5,12 +5,10 @@ import me.drwoops.syncity.SyncityPlugin;
 import org.bukkit.entity.Player;
 import org.json.JSONObject;
 
-public class DamagePlugin implements SyncityPlugin {
-
-    Syncity plugin;
+public class DamagePlugin extends SyncityPlugin {
 
     public DamagePlugin(Syncity plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override

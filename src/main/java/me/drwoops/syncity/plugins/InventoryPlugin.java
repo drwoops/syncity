@@ -10,12 +10,10 @@ import org.json.JSONObject;
 
 import java.util.Base64;
 
-public class InventoryPlugin implements SyncityPlugin {
-
-    Syncity plugin;
+public class InventoryPlugin extends SyncityPlugin {
 
     public InventoryPlugin(Syncity plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     private JSONArray serialize_itemstack(ItemStack[] list) {

@@ -9,13 +9,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public final class Syncity extends JavaPlugin implements Listener {
 
     public HashMap<String,SyncityPlugin> plugins;
-    public ArrayList<String> exclude;
     public Database db;
 
     @Override
@@ -32,6 +30,7 @@ public final class Syncity extends JavaPlugin implements Listener {
         plugins.put("damage", new DamagePlugin(this));
         plugins.put("hunger", new HungerPlugin(this));
         plugins.put("inventory", new InventoryPlugin(this));
+        plugins.put("effects", new PotionEffectsPlugin(this));
         // register event handlers
         getServer().getPluginManager().registerEvents(this, this);
     }

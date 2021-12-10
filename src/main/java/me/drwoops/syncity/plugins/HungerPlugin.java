@@ -5,12 +5,10 @@ import me.drwoops.syncity.SyncityPlugin;
 import org.bukkit.entity.Player;
 import org.json.JSONObject;
 
-public class HungerPlugin implements SyncityPlugin {
-
-    Syncity plugin;
+public class HungerPlugin extends SyncityPlugin {
 
     public HungerPlugin(Syncity plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override

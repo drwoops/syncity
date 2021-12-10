@@ -5,12 +5,10 @@ import me.drwoops.syncity.SyncityPlugin;
 import org.bukkit.entity.Player;
 import org.json.JSONObject;
 
-public class ExperiencePlugin implements SyncityPlugin {
-
-    Syncity plugin;
+public class ExperiencePlugin extends SyncityPlugin {
 
     public ExperiencePlugin(Syncity plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override

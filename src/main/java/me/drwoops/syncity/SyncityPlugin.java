@@ -3,8 +3,13 @@ package me.drwoops.syncity;
 import org.bukkit.entity.Player;
 import org.json.JSONObject;
 
-public interface SyncityPlugin {
+public abstract class SyncityPlugin {
 
-    JSONObject get(Player player);
-    void put(Player player, JSONObject data);
+    protected Syncity plugin;
+
+    public SyncityPlugin(Syncity plugin) {
+        this.plugin = plugin;
+    }
+    public abstract JSONObject get(Player player);
+    public abstract void put(Player player, JSONObject data);
 }
