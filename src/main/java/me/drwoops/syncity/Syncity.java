@@ -63,6 +63,8 @@ public final class Syncity extends JavaPlugin implements Listener {
                             p.put(player, data.getJSONObject(k));
                     }
             );
+            // remove the player from the database
+            // the server is now responsible for saving user data
             db.removePlayer(player);
         }
     }
