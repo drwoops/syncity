@@ -1,3 +1,4 @@
+// copyright (c) 2021 by drwoops <thedrwoops@gmail.com>
 package me.drwoops.syncity.plugins;
 
 import me.drwoops.syncity.Syncity;
@@ -9,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;

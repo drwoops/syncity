@@ -1,3 +1,4 @@
+// copyright (c) 2021 by drwoops <thedrwoops@gmail.com>
 package me.drwoops.syncity.plugins;
 
 import me.drwoops.syncity.Syncity;
