@@ -13,6 +13,8 @@ import java.util.HashMap;
 
 public final class Syncity extends JavaPlugin implements Listener {
 
+    final public int version = 1;
+
     public HashMap<String,SyncityPlugin> plugins;
     public Database db;
 
@@ -37,6 +39,10 @@ public final class Syncity extends JavaPlugin implements Listener {
 
     public JSONObject get_from_player(Player player) {
         JSONObject data = new JSONObject();
+        // version the schema in case we need migrations down the line
+        // only increase the version for incompatible schema changes
+        // extensions don't count
+        data.put("version", version);
         plugins.forEach(
                 (key, p) -> {
                     data.put(key, p.get(player));
