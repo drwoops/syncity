@@ -34,6 +34,7 @@ public final class Syncity extends JavaPlugin implements Listener {
         plugins.put("hunger", new HungerPlugin(this));
         plugins.put("inventory", new InventoryPlugin(this));
         plugins.put("effects", new PotionEffectsPlugin(this));
+        plugins.put("statistics", new StatisticsPlugin(this));
         // register event handlers
         getServer().getPluginManager().registerEvents(this, this);
     }
