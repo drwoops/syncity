@@ -79,8 +79,10 @@ public final class Syncity extends JavaPlugin implements Listener {
         if (data != null) {
             plugins.forEach(
                     (k, p) -> {
-                        if (data.has(k))
+                        if (data.has(k)) {
                             p.put(player, data.getJSONObject(k));
+                            getLogger().info("player "+k+" restored: "+player.getName());
+                        }
                     }
             );
             // remove the player from the database

@@ -23,7 +23,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.json.JSONObject;
 
-import java.io.StringReader;
 import java.sql.*;
 
 public class Database {
@@ -70,6 +69,7 @@ public class Database {
             stmt.setString(1, player.identity().uuid().toString());
             stmt.setString(2, data.toString());
             stmt.executeUpdate();
+            plugin.getLogger().info("Player data saved: " + player.getName());
         } catch (SQLException e) {
             plugin.getLogger().warning("savePlayerData: "+e.toString());
         }
