@@ -108,12 +108,17 @@ public final class Syncity extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        load_player(event.getPlayer());
+        Player player = event.getPlayer();
+        db.wait_for_status_left(player);
+        db.set_status(player, Database.STATUS_JOINED);
+        load_player(player);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        save_player(event.getPlayer());
+        Player player = event.getPlayer();
+        save_player(player);
+        db.set_status(player, Database.STATUS_LEFT);
     }
 
 }

@@ -54,9 +54,49 @@ public class Database {
                         "CREATE TABLE IF NOT EXISTS syncity (uuid CHAR(100) PRIMARY KEY, data JSON)"
                 );
                 stmt.executeUpdate();
+                stmt = db.prepareStatement(
+                        "CREATE TABLE IF NOT EXISTS syncity_status (uuid CHAR(100) PRIMARY KEY, status INT)"
+                );
+                stmt.executeUpdate();
             }
         } catch (SQLException e) {
             plugin.getLogger().warning("ensureConnection: "+e.toString());
+        }
+    }
+
+    static final int STATUS_LEFT = 0;
+    static final int STATUS_JOINED = 1;
+
+    void wait_for_status_left(Player player) {
+        try {
+            ensureConnection();
+            PreparedStatement stmt = db.prepareStatement(
+                    "SELECT status FROM syncity_status where uuid = ?"
+            );
+            stmt.setString(1, player.identity().uuid().toString());
+            for (int i = 0; i < 10; ++i) {
+                ResultSet r = stmt.executeQuery();
+                if (!r.next()) return;
+                if (r.getInt(1) == STATUS_LEFT) return;
+                try { Thread.sleep(10); } catch (InterruptedException e) {}
+            }
+            plugin.getLogger().warning("wait_for_status_left timed out");
+        } catch (SQLException e) {
+            plugin.getLogger().warning("wait_for_status_left: "+e.toString());
+        }
+    }
+
+    void set_status(Player player, int status) {
+        try {
+            ensureConnection();
+            PreparedStatement stmt = db.prepareStatement(
+                    "INSERT INTO syncity_status (uuid, status) VALUES (? , ?) ON DUPLICATE KEY UPDATE status=VALUES(status)"
+            );
+            stmt.setString(1, player.identity().uuid().toString());
+            stmt.setInt(2, status);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().warning("set_status: "+e.toString());
         }
     }
 
