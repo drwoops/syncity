@@ -57,6 +57,13 @@ public final class Syncity extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
     }
 
+    @Override
+    public void onDisable() {
+        for(Player p: getServer().getOnlinePlayers()) {
+            if (p.isOnline()) save_player(p);
+        }
+    }
+
     public JSONObject get_from_player(Player player) {
         JSONObject data = new JSONObject();
         // version the schema in case we need migrations down the line
