@@ -26,9 +26,11 @@ public abstract class SyncityPlugin {
 
     protected Syncity plugin;
 
-    public SyncityPlugin(Syncity plugin) {
-        this.plugin = plugin;
-    }
+    public SyncityPlugin(Syncity plugin) { this.plugin = plugin; }
     public abstract JSONObject get(Player player);
     public abstract void put(Player player, JSONObject data);
+    public void info(String msg) { plugin.info(msg); }
+    public void warning(String msg) { plugin.warning(msg); }
+    public void debug(String msg) { plugin.debug(msg); }
+
 }

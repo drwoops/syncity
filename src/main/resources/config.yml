@@ -1,8 +1,18 @@
+save-period: 30
 mysql:
   user: xxx
   password: yyy
   host: localhost
   port: 3306
   database: minecraft
-advancements:
-  exclude: []
+plugins:
+  advancements:
+    include:
+      - "minecraft"
+    exclude: []
+  experience: {}
+  damage: {}
+  hunger: {}
+  inventory: {}
+  effects: {}
+  statistics: {}

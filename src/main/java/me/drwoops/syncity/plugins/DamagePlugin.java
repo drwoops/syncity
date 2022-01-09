@@ -33,7 +33,9 @@ public class DamagePlugin extends SyncityPlugin {
     @Override
     public JSONObject get(Player player) {
         JSONObject data = new JSONObject();
+        debug("saving player health: "+player.getName());
         data.put("health", player.getHealth());
+        debug("saving player absorption: "+player.getName());
         data.put("absorption", player.getAbsorptionAmount());
         return data;
     }
@@ -41,7 +43,13 @@ public class DamagePlugin extends SyncityPlugin {
     @Override
     public void put(Player player, JSONObject data) {
         if (data == null) return;
-        if (data.has("health")) player.setHealth(data.getDouble("health"));
-        if (data.has("absorption")) player.setAbsorptionAmount(data.getDouble("absorption"));
+        if (data.has("health")) {
+            debug("restoring player health: "+player.getName());
+            player.setHealth(data.getDouble("health"));
+        }
+        if (data.has("absorption")) {
+            debug("restoring player absorption: "+player.getName());
+            player.setAbsorptionAmount(data.getDouble("absorption"));
+        }
     }
 }

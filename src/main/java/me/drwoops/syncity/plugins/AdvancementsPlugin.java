@@ -38,10 +38,12 @@ import static org.bukkit.Bukkit.getAdvancement;
 public class AdvancementsPlugin extends SyncityPlugin {
 
     List<String> exclude;
+    List<String> include;
 
     public AdvancementsPlugin(Syncity plugin) {
         super(plugin);
-        this.exclude = plugin.getConfig().getStringList("advancements.exclude");
+        this.exclude = plugin.getConfig().getStringList("plugins.advancements.exclude");
+        this.include = plugin.getConfig().getStringList("plugins.advancements.include");
     }
 
     public JSONObject get(Player player) {
@@ -51,11 +53,22 @@ public class AdvancementsPlugin extends SyncityPlugin {
         while (ai.hasNext()) {
             Advancement a = ai.next();
             String name = a.getKey().toString();
-            for (String v : exclude) {
+            boolean inc = false;
+            for (String v: include) {
                 if (name.startsWith(v)) {
-                    continue loop;
+                    inc = true;
+                    break;
                 }
             }
+            if (inc) {
+                for (String v : exclude) {
+                    if (name.startsWith(v)) {
+                        debug("ignoring "+name);
+                        continue loop;
+                    }
+                }
+            }
+            debug("saving "+name);
             AdvancementProgress ap = player.getAdvancementProgress(a);
             Collection<String> ac = ap.getAwardedCriteria();
             if (!ac.isEmpty()) {
@@ -68,7 +81,11 @@ public class AdvancementsPlugin extends SyncityPlugin {
 
     public void put(Player player, JSONObject data) {
         for (String aks : data.keySet()) {
-            NamespacedKey ak = NamespacedKey.fromString(aks);
+            debug("restoring "+aks);
+            int i = aks.indexOf(":");
+            String namespace = (i == -1)?"minecraft":aks.substring(0, i);
+            String key = (i == -1)?aks:aks.substring(i+1);
+            NamespacedKey ak = new NamespacedKey(namespace, key);
             Advancement a = getAdvancement(ak);
             AdvancementProgress ap = player.getAdvancementProgress(a);
             JSONArray l = data.getJSONArray(a.getKey().toString());

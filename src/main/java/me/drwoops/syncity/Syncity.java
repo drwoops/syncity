@@ -19,16 +19,23 @@
 
 package me.drwoops.syncity;
 
+import me.drwoops.syncity.database.*;
 import me.drwoops.syncity.plugins.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public final class Syncity extends JavaPlugin implements Listener {
 
@@ -36,6 +43,12 @@ public final class Syncity extends JavaPlugin implements Listener {
 
     public HashMap<String,SyncityPlugin> plugins;
     public Database db;
+    private boolean _debug = true;
+    HashMap<String, BukkitTask> save_tasks;
+    int save_period;
+
+    public boolean getDebug() { return _debug; }
+    public void debug(String msg) { if (getDebug()) info(msg); }
 
     @Override
     public void onEnable() {
@@ -55,6 +68,8 @@ public final class Syncity extends JavaPlugin implements Listener {
         plugins.put("statistics", new StatisticsPlugin(this));
         // register event handlers
         getServer().getPluginManager().registerEvents(this, this);
+        save_tasks = new HashMap<String, BukkitTask>();
+        save_period = getConfig().getInt("save-period");
     }
 
     @Override
@@ -62,6 +77,12 @@ public final class Syncity extends JavaPlugin implements Listener {
         for(Player p: getServer().getOnlinePlayers()) {
             if (p.isOnline()) save_player(p);
         }
+        CompletableFuture<Boolean> done = new CompletableFuture<Boolean>();
+        db.add_task(new DatabaseStopTask(done));
+        // wait until all tasks have been processed
+        debug("waiting for all database tasks to complete");
+        try { done.get(); } catch (Exception ignored) {}
+        debug("database tasks completed");
     }
 
     public JSONObject get_from_player(Player player) {
@@ -78,8 +99,15 @@ public final class Syncity extends JavaPlugin implements Listener {
         return data;
     }
 
-    public JSONObject get_from_database(Player player) {
-        return db.loadPlayerData(player);
+    public CompletableFuture<JSONObject> get_from_player_synchronously(Player player) {
+        CompletableFuture<JSONObject> data = new CompletableFuture<JSONObject>();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                data.complete(get_from_player(player));
+            }
+        }.runTask(this);
+        return data;
     }
 
     public void update_player(Player player, JSONObject data) {
@@ -92,33 +120,48 @@ public final class Syncity extends JavaPlugin implements Listener {
                         }
                     }
             );
-            // remove the player from the database
-            // the server is now responsible for saving user data
-            db.removePlayer(player);
         }
     }
 
     public void save_player(Player player) {
-        db.savePlayerData(player, get_from_player(player));
-    }
-
-    public void load_player(Player player) {
-        update_player(player, db.loadPlayerData(player));
+        JSONObject data = get_from_player(player);
+        db.add_task(new DatabaseSaveTask(player, data));
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        db.wait_for_status_left(player);
-        db.set_status(player, Database.STATUS_JOINED);
-        load_player(player);
+        db.add_task(new DatabaseLoginTask(player));
+        BukkitTask task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                JSONObject data = null;
+                try {
+                    data = get_from_player_synchronously(player).get();
+                } catch (InterruptedException ignored) {
+                } catch (ExecutionException ignored) {
+                }
+                if (data != null )
+                    db.add_task(new DatabaseSaveTask(player, data));
+            }
+        }.runTaskTimerAsynchronously(this, save_period*1000, save_period*1000);
+        save_tasks.put(player.identity().uuid().toString(), task);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        save_player(player);
-        db.set_status(player, Database.STATUS_LEFT);
+        save_tasks.remove(player.identity().uuid().toString()).cancel();
+        JSONObject data = get_from_player(player);
+        db.add_task(new DatabaseLogoutTask(player, data));
+    }
+
+    public void info(String msg) {
+        getLogger().info(msg);
+    }
+
+    public void warning(String msg) {
+        getLogger().warning(msg);
     }
 
 }
