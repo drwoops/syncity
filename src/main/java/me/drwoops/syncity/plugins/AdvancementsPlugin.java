@@ -67,7 +67,8 @@ public class AdvancementsPlugin extends SyncityPlugin {
                         continue loop;
                     }
                 }
-            }
+            } else
+                continue;
             debug("saving "+name);
             AdvancementProgress ap = player.getAdvancementProgress(a);
             Collection<String> ac = ap.getAwardedCriteria();
@@ -80,12 +81,30 @@ public class AdvancementsPlugin extends SyncityPlugin {
     }
 
     public void put(Player player, JSONObject data) {
+        loop:
         for (String aks : data.keySet()) {
             debug("restoring "+aks);
+            boolean inc = false;
+            for (String v: include) {
+                if (aks.startsWith(v)) {
+                    inc = true;
+                    break;
+                }
+            }
+            if (inc) {
+                for (String v : exclude) {
+                    if (aks.startsWith(v)) {
+                        debug("ignoring "+aks);
+                        continue loop;
+                    }
+                }
+            } else
+                continue;
             int i = aks.indexOf(":");
             String namespace = (i == -1)?"minecraft":aks.substring(0, i);
             String key = (i == -1)?aks:aks.substring(i+1);
             NamespacedKey ak = new NamespacedKey(namespace, key);
+            debug("AdvancementPlugin.put "+aks+" "+ak);
             Advancement a = getAdvancement(ak);
             AdvancementProgress ap = player.getAdvancementProgress(a);
             JSONArray l = data.getJSONArray(a.getKey().toString());

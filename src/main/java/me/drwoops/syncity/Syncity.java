@@ -70,6 +70,9 @@ public final class Syncity extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         save_tasks = new HashMap<String, BukkitTask>();
         save_period = getConfig().getInt("save-period");
+        for (Player p: getServer().getOnlinePlayers()) {
+            on_player_join(p);
+        }
     }
 
     @Override
@@ -115,8 +118,9 @@ public final class Syncity extends JavaPlugin implements Listener {
             plugins.forEach(
                     (k, p) -> {
                         if (data.has(k)) {
+                            info(" trying to restore "+k+" for "+player.getName());
                             p.put(player, data.getJSONObject(k));
-                            getLogger().info("player "+k+" restored: "+player.getName());
+                            info("player "+k+" restored: "+player.getName());
                         }
                     }
             );
@@ -128,9 +132,18 @@ public final class Syncity extends JavaPlugin implements Listener {
         db.add_task(new DatabaseSaveTask(player, data));
     }
 
+    public void login_player(Player player) {
+        if (!save_tasks.containsKey(player.identity().uuid().toString()))
+            on_player_join(player);
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        on_player_join(player);
+    }
+
+    void on_player_join(Player player) {
         db.add_task(new DatabaseLoginTask(player));
         BukkitTask task = new BukkitRunnable() {
             @Override
