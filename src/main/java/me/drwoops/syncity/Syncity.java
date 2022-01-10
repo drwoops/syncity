@@ -19,8 +19,13 @@
 
 package me.drwoops.syncity;
 
+import me.drwoops.syncity.commands.DebugCommand;
 import me.drwoops.syncity.database.*;
 import me.drwoops.syncity.plugins.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,9 +36,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -46,8 +54,10 @@ public final class Syncity extends JavaPlugin implements Listener {
     private boolean _debug = true;
     HashMap<String, BukkitTask> save_tasks;
     int save_period;
+    HashMap<String, TabExecutor> subcommands;
 
     public boolean getDebug() { return _debug; }
+    public void setDebug(boolean b) { _debug = b; }
     public void debug(String msg) { if (getDebug()) info(msg); }
 
     @Override
@@ -68,6 +78,12 @@ public final class Syncity extends JavaPlugin implements Listener {
         plugins.put("statistics", new StatisticsPlugin(this));
         // register event handlers
         getServer().getPluginManager().registerEvents(this, this);
+        // register commands
+        subcommands = new HashMap<String, TabExecutor>();
+        getCommand("syncity").setExecutor(this);
+        getCommand("syncity").setTabCompleter(this);
+        subcommands.put("debug", new DebugCommand(this));
+        // setup periodic user saves
         save_tasks = new HashMap<String, BukkitTask>();
         save_period = getConfig().getInt("save-period");
         for (Player p: getServer().getOnlinePlayers()) {
@@ -148,6 +164,7 @@ public final class Syncity extends JavaPlugin implements Listener {
         BukkitTask task = new BukkitRunnable() {
             @Override
             public void run() {
+                debug("periodic save for: "+player.getName());
                 JSONObject data = null;
                 try {
                     data = get_from_player_synchronously(player).get();
@@ -177,4 +194,27 @@ public final class Syncity extends JavaPlugin implements Listener {
         getLogger().warning(msg);
     }
 
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length > 0 && subcommands.containsKey(args[0]))
+            return subcommands.get(args[0]).onCommand(sender, command, label, args);
+        return false;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        if (args.length == 0) return new ArrayList<String>(subcommands.keySet());
+        else if (args.length == 1) {
+            ArrayList<String> completions = new ArrayList<String>();
+            String prefix = args[0];
+            for (String key: subcommands.keySet())
+                if (key.startsWith(prefix)) completions.add(key);
+            return completions;
+        } else {
+            String subcmd = args[0];
+            if (subcommands.containsKey(subcmd))
+                return subcommands.get(subcmd).onTabComplete(sender, command, alias, args);
+            else return null;
+        }
+    }
 }

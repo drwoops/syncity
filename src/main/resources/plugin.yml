@@ -4,3 +4,7 @@ main: me.drwoops.syncity.Syncity
 api-version: 1.17
 authors: [ drwoops ]
 description: sync all the things when players move between servers
+commands:
+  syncity:
+    description: execute a syncity command
+    usage: /<command> subcommand args...
