@@ -247,19 +247,4 @@ public class Database {
         plugin.warning("loadPlayerData: failed! too many failures");
         return null;
     }
-
-    public void removePlayer(Player player) {
-        try {
-            ensureConnection();
-            PreparedStatement stmt = db.prepareStatement(
-                    "DELETE FROM syncity WHERE uuid = ?"
-            );
-            stmt.setString(1, player.identity().uuid().toString());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            plugin.getLogger().warning("removePlayer: "+e.toString());
-        }
-    }
-
-
 }
