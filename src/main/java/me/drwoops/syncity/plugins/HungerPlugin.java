@@ -32,31 +32,31 @@ public class HungerPlugin extends SyncityPlugin {
 
     @Override
     public JSONObject get(Player player) {
-        debug("saving Hunger");
+        debug("  saving Hunger");
         JSONObject data = new JSONObject();
-        debug("  saving food: "+player.getName());
+        debug("    saving food: "+player.getName());
         data.put("food", player.getFoodLevel());
-        debug("  saving exhaustion: "+player.getName());
+        debug("    saving exhaustion: "+player.getName());
         data.put("exhaustion", player.getExhaustion());
-        debug("  saving saturation: "+player.getName());
+        debug("    saving saturation: "+player.getName());
         data.put("saturation", player.getSaturation());
         return data;
     }
 
     @Override
     public void put(Player player, JSONObject data) {
-        debug("restoring hunger: "+player.getName());
+        debug("  restoring hunger: "+player.getName());
         if (data == null) return;
         if (data.has("food")) {
-            debug("  restoring food: "+player.getName());
+            debug("    restoring food: "+player.getName());
             player.setFoodLevel(data.getInt("food"));
         }
         if (data.has("exhaustion")) {
-            debug("  restoring exhaustion: "+player.getName());
+            debug("    restoring exhaustion: "+player.getName());
             player.setExhaustion(data.getFloat("exhaustion"));
         }
         if (data.has("saturation")) {
-            debug("  restoring saturation: "+player.getName());
+            debug("    restoring saturation: "+player.getName());
             player.setSaturation(data.getFloat("saturation"));
         }
     }

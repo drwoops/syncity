@@ -47,11 +47,16 @@ public class InventoryPlugin extends SyncityPlugin {
 
     @Override
     public JSONObject get(Player player) {
+        debug("  saving inventory: "+player.getName());
         JSONObject data = new JSONObject();
         PlayerInventory inv = player.getInventory();
+        debug("    saving contents");
         data.put("contents", serialize_itemstack(inv.getStorageContents()));
+        debug("    saving armor");
         data.put("armor", serialize_itemstack(inv.getArmorContents()));
+        debug("    saving extra");
         data.put("extra", serialize_itemstack(inv.getExtraContents()));
+        debug("    saving enderchest");
         data.put("enderchest", serialize_itemstack(player.getEnderChest().getContents()));
         return data;
     }
@@ -69,28 +74,28 @@ public class InventoryPlugin extends SyncityPlugin {
 
     @Override
     public void put(Player player, JSONObject data) {
-        info("restoring player's stuff");
+        info("  restoring inventory: "+player.getName());
         if (data == null) return;
         debug("  there is actual stuff");
         Base64.Decoder decoder = Base64.getDecoder();
         PlayerInventory inv = player.getInventory();
         if (data.has("contents")) {
-            debug("  restoring contents");
+            debug("    restoring contents");
             JSONArray contents_json = data.getJSONArray("contents");
             inv.setStorageContents(deserialize_itemstack(contents_json));
         }
         if (data.has("armor")) {
-            debug("  restoring armor");
+            debug("    restoring armor");
             JSONArray armor_json = data.getJSONArray("armor");
             inv.setArmorContents(deserialize_itemstack(armor_json));
         }
         if (data.has("extra")) {
-            debug("  restoring extra");
+            debug("    restoring extra");
             JSONArray extra_json = data.getJSONArray("extra");
             inv.setExtraContents(deserialize_itemstack(extra_json));
         }
         if (data.has("enderchest")) {
-            debug("  restoring enderchest");
+            debug("    restoring enderchest");
             JSONArray enderchest_json = data.getJSONArray("enderchest");
             player.getEnderChest().setContents(deserialize_itemstack(enderchest_json));
         }
