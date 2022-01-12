@@ -58,7 +58,7 @@ public final class Syncity extends JavaPlugin implements Listener {
 
     public boolean getDebug() { return _debug; }
     public void setDebug(boolean b) { _debug = b; }
-    public void debug(String msg) { if (getDebug()) info(msg); }
+    public void debug(String... args) { if (getDebug()) info(String.join("", args)); }
 
     @Override
     public void onEnable() {

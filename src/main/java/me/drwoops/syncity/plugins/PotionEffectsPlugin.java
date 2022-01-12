@@ -45,11 +45,11 @@ public class PotionEffectsPlugin extends SyncityPlugin {
 
     @Override
     public JSONObject get(Player player) {
-        debug("  saving effects: "+player.getName());
+        debug("  saving effects: ", player.getName());
         Collection<PotionEffect> effects = player.getActivePotionEffects();
         JSONArray effects_json = new JSONArray(effects.size());
         for (PotionEffect effect: effects) {
-            debug("    saving effect: "+effect.toString());
+            debug("    saving effect: ", effect.toString());
             effects_json.put(serialize_effect(effect));
             // we are leaving the server, so remove the effect here
             // it will be reacquired wherever we join from
@@ -71,11 +71,11 @@ public class PotionEffectsPlugin extends SyncityPlugin {
     public void put(Player player, JSONObject data) {
         if (data==null) return;
         if (data.has("effects")) {
-            debug("  restoring effects: "+player.getName());
+            debug("  restoring effects: ", player.getName());
             JSONArray effects_json = data.getJSONArray("effects");
             effects_json.forEach(
                     e -> {
-                        debug("    restoring "+e.toString());
+                        debug("    restoring ", e.toString());
                         player.addPotionEffect(deserialize_effect((JSONObject) e));
                     }
             );

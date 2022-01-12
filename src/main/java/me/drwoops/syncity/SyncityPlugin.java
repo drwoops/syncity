@@ -31,6 +31,6 @@ public abstract class SyncityPlugin {
     public abstract void put(Player player, JSONObject data);
     public void info(String msg) { plugin.info(msg); }
     public void warning(String msg) { plugin.warning(msg); }
-    public void debug(String msg) { plugin.debug(msg); }
+    public void debug(String... args) { plugin.debug(args); }
 
 }

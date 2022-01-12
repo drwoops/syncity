@@ -48,33 +48,32 @@ public class AdvancementsPlugin extends SyncityPlugin {
 
     boolean is_included(String name) {
         boolean inc = false;
-        for (String v: include) {
+        for (String v : include) {
             if (name.startsWith(v)) {
                 inc = true;
                 break;
             }
         }
-        if (inc) {
-            for (String v : exclude) {
-                if (name.startsWith(v))
-                    return false;
-            }
+        if (!inc) return false;
+        for (String v : exclude) {
+            if (name.startsWith(v))
+                return false;
         }
         return true;
     }
 
     public JSONObject get(Player player) {
-        debug("  saving player advancements: "+player.getName());
+        debug("  saving player advancements: ", player.getName());
         JSONObject advancements = new JSONObject();
         Iterator<Advancement> ai = advancementIterator();
         while (ai.hasNext()) {
             Advancement a = ai.next();
             String name = a.getKey().toString();
-            if (! is_included(name)) {
-                debug("    ignoring "+name);
+            if (!is_included(name)) {
+                debug("    ignoring ", name);
                 continue;
             }
-            debug("    saving "+name);
+            debug("    saving ", name);
             AdvancementProgress ap = player.getAdvancementProgress(a);
             Collection<String> ac = ap.getAwardedCriteria();
             if (!ac.isEmpty()) {
@@ -86,18 +85,18 @@ public class AdvancementsPlugin extends SyncityPlugin {
     }
 
     public void put(Player player, JSONObject data) {
-        debug("  restoring player advancements: "+player.getName());
+        debug("  restoring player advancements: ", player.getName());
         for (String aks : data.keySet()) {
-            if (! is_included(aks)) {
-                debug("    ignoring "+aks);
+            if (!is_included(aks)) {
+                debug("    ignoring ", aks);
                 continue;
             }
-            debug("    restoring "+aks);
+            debug("    restoring ", aks);
             int i = aks.indexOf(":");
-            String namespace = (i == -1)?"minecraft":aks.substring(0, i);
-            String key = (i == -1)?aks:aks.substring(i+1);
+            String namespace = (i == -1) ? "minecraft" : aks.substring(0, i);
+            String key = (i == -1) ? aks : aks.substring(i + 1);
             NamespacedKey ak = new NamespacedKey(namespace, key);
-            debug("    - "+ak);
+            debug("    - " + ak);
             Advancement a = getAdvancement(ak);
             AdvancementProgress ap = player.getAdvancementProgress(a);
             JSONArray l = data.getJSONArray(a.getKey().toString());

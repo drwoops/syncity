@@ -47,7 +47,7 @@ public class InventoryPlugin extends SyncityPlugin {
 
     @Override
     public JSONObject get(Player player) {
-        debug("  saving inventory: "+player.getName());
+        debug("  saving inventory: ", player.getName());
         JSONObject data = new JSONObject();
         PlayerInventory inv = player.getInventory();
         debug("    saving contents");

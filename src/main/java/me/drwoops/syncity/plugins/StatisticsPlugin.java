@@ -33,14 +33,14 @@ public class StatisticsPlugin extends SyncityPlugin {
 
     @Override
     public JSONObject get(Player player) {
-        debug("  saving statistics: "+player.getName());
+        debug("  saving statistics: ", player.getName());
         JSONObject data = new JSONObject();
         for (Statistic stat: Statistic.values()) {
             Statistic.Type styp = stat.getType();
             if (styp == Statistic.Type.UNTYPED) {
                 // simple statistic
                 int n = player.getStatistic(stat);
-                debug("    saving "+stat.name());
+                debug("    saving ", stat.name());
                 data.put(stat.getKey().toString(), n);
             } else {
                 JSONObject subdata = new JSONObject();
@@ -50,7 +50,7 @@ public class StatisticsPlugin extends SyncityPlugin {
                         if (typ == EntityType.UNKNOWN) continue;
                         int n = player.getStatistic(stat, typ);
                         if (n > 0) {
-                            debug("    saving "+typ.name());
+                            debug("    saving ", typ.name());
                             subdata.put(typ.getKey().toString(), n);
                         }
                     }
@@ -59,13 +59,13 @@ public class StatisticsPlugin extends SyncityPlugin {
                     for (Material mat : Material.values()) {
                         int n = player.getStatistic(stat, mat);
                         if (n > 0) {
-                            debug("    saving "+mat.name());
+                            debug("    saving ", mat.name());
                             subdata.put(mat.getKey().toString(), n);
                         }
                     }
                 }
                 if (subdata.length() != 0) {
-                    debug("    saving "+stat.name());
+                    debug("    saving ", stat.name());
                     data.put(stat.getKey().toString(), subdata);
                 }
             }
@@ -76,11 +76,11 @@ public class StatisticsPlugin extends SyncityPlugin {
     @Override
     public void put(Player player, JSONObject data) {
         if (data==null) return;
-        debug("  restoring statistics: "+player.getName());
+        debug("  restoring statistics: ", player.getName());
         for (Statistic stat: Statistic.values()) {
             String name = stat.getKey().toString();
             if (!data.has(name)) continue;
-            debug("    restoring "+name);
+            debug("    restoring ", name);
             Statistic.Type styp = stat.getType();
             if (styp == Statistic.Type.UNTYPED) {
                 // simple statistic
@@ -93,7 +93,7 @@ public class StatisticsPlugin extends SyncityPlugin {
                         if (typ == EntityType.UNKNOWN) continue;
                         String subname = typ.getKey().toString();
                         if (subdata.has(subname)) {
-                            debug("    - "+typ.name());
+                            debug("    - ", typ.name());
                             player.setStatistic(stat, typ, subdata.getInt(subname));
                         }
                     }
@@ -102,7 +102,7 @@ public class StatisticsPlugin extends SyncityPlugin {
                     for (Material mat: Material.values()) {
                         String subname = mat.getKey().toString();
                         if (subdata.has(subname)) {
-                            debug("    - "+subname);
+                            debug("    - ", subname);
                             player.setStatistic(stat, mat, subdata.getInt(subname));
                         }
                     }
