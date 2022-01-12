@@ -145,7 +145,7 @@ public final class Syncity extends JavaPlugin implements Listener {
 
     public void save_player(Player player) {
         JSONObject data = get_from_player(player);
-        db.add_task(new DatabaseSaveTask(player, data));
+        db.add_task(new DatabaseSaveTask(player, data, null));
     }
 
     public void login_player(Player player) {
@@ -161,20 +161,8 @@ public final class Syncity extends JavaPlugin implements Listener {
 
     void on_player_join(Player player) {
         db.add_task(new DatabaseLoginTask(player));
-        BukkitTask task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                debug("periodic save for: "+player.getName());
-                JSONObject data = null;
-                try {
-                    data = get_from_player_synchronously(player).get();
-                } catch (InterruptedException ignored) {
-                } catch (ExecutionException ignored) {
-                }
-                if (data != null )
-                    db.add_task(new DatabaseSaveTask(player, data));
-            }
-        }.runTaskTimerAsynchronously(this, save_period*1000, save_period*1000);
+        BukkitTask task = new PeriodicSaveRunnable(this, player
+        ).runTaskTimerAsynchronously(this, save_period*1000, save_period*1000);
         save_tasks.put(player.identity().uuid().toString(), task);
     }
 

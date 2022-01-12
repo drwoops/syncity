@@ -18,20 +18,24 @@
 */
 package me.drwoops.syncity.database;
 
+import me.drwoops.syncity.PeriodicSaveRunnable;
 import org.bukkit.entity.Player;
 import org.json.JSONObject;
 
 public class DatabaseSaveTask implements DatabaseTask {
     Player player;
+    PeriodicSaveRunnable runnable;
     JSONObject data;
 
-    public DatabaseSaveTask(Player player, JSONObject data) {
+    public DatabaseSaveTask(Player player, JSONObject data, PeriodicSaveRunnable runnable) {
         this.player = player;
+        this.runnable = runnable;
         this.data = data;
     }
 
     @Override
     public void run(Database database) {
         database.savePlayerData(player, data);
+        if (runnable != null) runnable.in_progress = false;
     }
 }
