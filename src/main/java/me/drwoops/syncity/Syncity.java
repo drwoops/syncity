@@ -162,7 +162,7 @@ public final class Syncity extends JavaPlugin implements Listener {
     void on_player_join(Player player) {
         db.add_task(new DatabaseLoginTask(player));
         BukkitTask task = new PeriodicSaveRunnable(this, player
-        ).runTaskTimerAsynchronously(this, save_period*1000, save_period*1000);
+        ).runTaskTimerAsynchronously(this, save_period*20, save_period*20);
         save_tasks.put(player.identity().uuid().toString(), task);
     }
 
