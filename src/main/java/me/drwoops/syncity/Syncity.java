@@ -20,6 +20,7 @@
 package me.drwoops.syncity;
 
 import me.drwoops.syncity.commands.DebugCommand;
+import me.drwoops.syncity.commands.InventoryCommand;
 import me.drwoops.syncity.database.*;
 import me.drwoops.syncity.plugins.*;
 import org.bukkit.command.Command;
@@ -33,6 +34,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +53,7 @@ public final class Syncity extends JavaPlugin implements Listener {
 
     public HashMap<String,SyncityPlugin> plugins;
     public Database db;
-    private boolean _debug = true;
+    private boolean _debug = false;
     HashMap<String, BukkitTask> save_tasks;
     int save_period;
     HashMap<String, TabExecutor> subcommands;
@@ -83,6 +85,7 @@ public final class Syncity extends JavaPlugin implements Listener {
         getCommand("syncity").setExecutor(this);
         getCommand("syncity").setTabCompleter(this);
         subcommands.put("debug", new DebugCommand(this));
+        subcommands.put("inv", new InventoryCommand(this));
         // setup periodic user saves
         save_tasks = new HashMap<String, BukkitTask>();
         save_period = getConfig().getInt("save-period");
@@ -171,6 +174,10 @@ public final class Syncity extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         save_tasks.remove(player.identity().uuid().toString()).cancel();
         JSONObject data = get_from_player(player);
+        for (PotionEffect effect: player.getActivePotionEffects())
+            // we are leaving the server, so remove the effect here
+            // it will be reacquired wherever we join from
+            player.removePotionEffect(effect.getType());
         db.add_task(new DatabaseLogoutTask(player, data));
     }
 

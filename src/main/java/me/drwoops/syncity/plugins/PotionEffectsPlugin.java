@@ -51,9 +51,6 @@ public class PotionEffectsPlugin extends SyncityPlugin {
         for (PotionEffect effect: effects) {
             debug("    saving effect: ", effect.toString());
             effects_json.put(serialize_effect(effect));
-            // we are leaving the server, so remove the effect here
-            // it will be reacquired wherever we join from
-            player.removePotionEffect(effect.getType());
         }
         JSONObject data = new JSONObject();
         data.put("effects", effects_json);
