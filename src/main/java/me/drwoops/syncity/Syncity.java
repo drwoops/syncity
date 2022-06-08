@@ -20,7 +20,7 @@
 package me.drwoops.syncity;
 
 import me.drwoops.syncity.commands.DebugCommand;
-import me.drwoops.syncity.commands.InventoryCommand;
+//import me.drwoops.syncity.commands.InventoryCommand;
 import me.drwoops.syncity.database.*;
 import me.drwoops.syncity.plugins.*;
 import org.bukkit.command.Command;
@@ -85,7 +85,7 @@ public final class Syncity extends JavaPlugin implements Listener {
         getCommand("syncity").setExecutor(this);
         getCommand("syncity").setTabCompleter(this);
         subcommands.put("debug", new DebugCommand(this));
-        subcommands.put("inv", new InventoryCommand(this));
+        //subcommands.put("inv", new InventoryCommand(this));
         // setup periodic user saves
         save_tasks = new HashMap<String, BukkitTask>();
         save_period = getConfig().getInt("save-period");

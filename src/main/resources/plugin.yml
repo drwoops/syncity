@@ -1,9 +1,10 @@
 name: Syncity
-version: '${project.version}'
+version: '${version}'
 main: me.drwoops.syncity.Syncity
-api-version: 1.17
+api-version: 1.18
 authors: [ drwoops ]
-description: sync all the things when players move between servers
+description: a paper plugin to sync all the things when players move between servers
+website: https://github.com/drwoops/syncity
 commands:
   syncity:
     description: execute a syncity command
