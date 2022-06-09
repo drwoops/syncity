@@ -6,6 +6,13 @@ plugins {
 group = 'me.drwoops'
 version = '1.0'
 
+ext {
+    minecraft_version = '1.18.2'
+    paper_api_version = 'R0.1-SNAPSHOT'
+    json_version = '20220320'
+    mysql_connector_version = '8.0.29'
+}
+
 repositories {
     mavenCentral()
     maven {
@@ -19,9 +26,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
-    implementation 'org.json:json:20220320'
-    compileOnly 'mysql:mysql-connector-java:8.0.29'
+    compileOnly "io.papermc.paper:paper-api:${minecraft_version}-${paper_api_version}"
+    implementation "org.json:json:${json_version}"
+    compileOnly "mysql:mysql-connector-java:${mysql_connector_version}"
 }
 
 def targetJavaVersion = 17
@@ -51,6 +58,6 @@ processResources {
 
 shadowJar {
     destinationDirectory.set(file("$rootDir/build/plugin"))
-    archiveClassifier.set('')
+    archiveClassifier.set("${minecraft_version}")
     mergeServiceFiles()
 }
