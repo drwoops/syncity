@@ -7,7 +7,7 @@ group = 'me.drwoops'
 version = '1.0'
 
 ext {
-    minecraft_version = '1.19'
+    minecraft_version = '1.20'
     paper_api_version = 'R0.1-SNAPSHOT'
     json_version = '20220320'
     mysql_connector_version = '8.0.29'
